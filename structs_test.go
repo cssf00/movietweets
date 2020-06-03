@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"sort"
+	"strings"
 	"testing"
+	"time"
 
 	. "github.com/onsi/gomega"
 )
@@ -33,4 +36,29 @@ func TestSortResultsYearDescendingOrder(t *testing.T) {
 	sort.Sort(sort.Reverse(rs))
 
 	g.Expect(rs[0]).Should(Equal(Result{Year: 2012}))
+}
+
+func TestStringSliceSort(t *testing.T) {
+	g := NewGomegaWithT(t)
+
+	var genreSlice sort.StringSlice
+	genreSlice = strings.Split("Short|Drama|Fantasy", "|")
+	genreSlice.Sort()
+
+	g.Expect(len(genreSlice)).Should(Equal(3))
+	g.Expect(genreSlice[0]).Should(Equal("Drama"))
+	g.Expect(genreSlice[1]).Should(Equal("Fantasy"))
+	g.Expect(genreSlice[2]).Should(Equal("Short"))
+}
+
+func TestExtractYears(t *testing.T) {
+	g := NewGomegaWithT(t)
+
+	var i int64 = 1365029107
+	ratingTime := time.Unix(i, 0)
+	ratingTimeStr := ratingTime.Format(time.RFC3339Nano)
+	fmt.Println(ratingTimeStr)
+	yr := ratingTime.Year()
+	fmt.Println(yr)
+	g.Expect(1).Should(Equal(1))
 }
