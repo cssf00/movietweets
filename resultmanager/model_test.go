@@ -1,7 +1,6 @@
 package resultmanager
 
 import (
-	"fmt"
 	"sort"
 	"strings"
 	"testing"
@@ -51,35 +50,14 @@ func TestStringSliceSort(t *testing.T) {
 	g.Expect(genreSlice[2]).Should(Equal("Short"))
 }
 
-func TestExtractYears(t *testing.T) {
+func TestExtractYear(t *testing.T) {
 	g := NewGomegaWithT(t)
 
 	var i int64 = 1365029107
 	ratingTime := time.Unix(i, 0)
-	ratingTimeStr := ratingTime.Format(time.RFC3339Nano)
-	fmt.Println(ratingTimeStr)
+	ratingTimeStr := ratingTime.UTC().Format(time.RFC3339Nano)
+	g.Expect(ratingTimeStr).Should(Equal("2013-04-03T22:45:07Z"))
+
 	yr := ratingTime.Year()
-	fmt.Println(yr)
-	g.Expect(1).Should(Equal(1))
-}
-
-func TestCaptureDataStructure(t *testing.T) {
-	g := NewGomegaWithT(t)
-
-	capture(2012, "Horror")
-	capture(2012, "Horror")
-	capture(2013, "Thriller")
-
-	g.Expect(year2GenreCounts[2012]["Horror"]).Should(Equal(2))
-	g.Expect(year2GenreCounts[2013]["Thriller"]).Should(Equal(1))
-}
-
-var year2GenreCounts = make(map[int]map[string]int, 0)
-
-func capture(year int, genre string) {
-	if m, ok := year2GenreCounts[year]; ok {
-		m[genre]++
-	} else {
-		year2GenreCounts[year] = map[string]int{genre: 1}
-	}
+	g.Expect(yr).Should(Equal(2013))
 }

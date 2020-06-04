@@ -9,6 +9,7 @@ import (
 	"sort"
 	"time"
 
+	"github.com/samuel-foo/movietweets"
 	resultm "github.com/samuel-foo/movietweets/resultmanager"
 )
 
@@ -30,18 +31,18 @@ func main() {
 	flag.Parse()
 
 	// Validate files must exist
-	for _, f := range []string{FileNameMovies, FileNameRatings} {
+	for _, f := range []string{movietweets.FileNameMovies, movietweets.FileNameRatings} {
 		if _, err := os.Stat(filepath.Join(dataDir, f)); os.IsNotExist(err) {
 			log.Fatalf("File %s does not exists\n", f)
 		}
 	}
 
-	movieID2Genre, err := getMovieIDToGenreMap(dataDir)
+	movieID2Genre, err := movietweets.GetMovieIDToGenreMap(dataDir)
 	if err != nil {
 		os.Exit(2)
 	}
 
-	results, err := processRatings(dataDir, currentYear, movieID2Genre)
+	results, err := movietweets.GetYearlyGenreCountResults(dataDir, currentYear, movieID2Genre)
 	if err != nil {
 		os.Exit(3)
 	}
@@ -61,7 +62,7 @@ func main() {
 			tempTopN = len(genreCounts)
 		}
 		for _, gc := range genreCounts[:tempTopN] {
-			fmt.Printf("-- %s : %d\n", gc.Genre, gc.Count)
+			fmt.Printf("   %s : %d\n", gc.Genre, gc.Count)
 		}
 
 		fmt.Println() // separate year section if there are multiple

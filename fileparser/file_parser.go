@@ -14,7 +14,7 @@ const (
 	DataDelimiter = "::"
 )
 
-// RowAction is a function that accepts slice of field values for each row and allow capture of fields
+// RowAction is a function that accepts a slice of field values for each row and allow capture of fields
 type RowAction func(fields []string) error
 
 // ParseFile accepts a file path to read from and expected field count, it loops through the file line by line.
