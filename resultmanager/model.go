@@ -1,4 +1,4 @@
-package main
+package resultmanager
 
 // Result struct
 type Result struct {

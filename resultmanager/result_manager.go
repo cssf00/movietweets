@@ -1,7 +1,6 @@
-package main
+package resultmanager
 
 import (
-	"fmt"
 	"sort"
 )
 
@@ -42,13 +41,11 @@ func (m *resultManager) Capture(year int, genre string) {
 	}
 }
 
-// GetResult returns results in ascending year
+// GetResult returns results in ascending year, genre counts are not sorted to allow the caller
+// to sort them based on their needs
 func (m *resultManager) GetResult() Results {
-	fmt.Printf("Entries in Result=%d\n", len(m.year2GenreCounts))
 	var results Results
 	for year, genre2Count := range m.year2GenreCounts {
-		fmt.Printf("Entries in GenreCounts=%d\n", len(m.year2GenreCounts[year]))
-		fmt.Printf("Content in GenreCounts=%v\n", m.year2GenreCounts[year])
 		var genreCounts GenreCounts
 		for genre, count := range genre2Count {
 			genreCounts = append(genreCounts, GenreCount{Genre: genre, Count: count})
@@ -61,6 +58,7 @@ func (m *resultManager) GetResult() Results {
 			})
 	}
 
+	// by default sort results by year ascending
 	sort.Sort(results)
 	return results
 }
