@@ -49,7 +49,7 @@ func ParseFile(filePath string, fieldCount int, action RowAction) error {
 
 		if err := action(fields); err != nil {
 			log.Println("action fails with error, exiting...")
-			break
+			return err
 		}
 	}
 

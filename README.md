@@ -8,21 +8,27 @@ The entry point of this tool is in "movietweets/cmd" directory, where the main.g
 
 To build the executable, change directory to "movietweets/cmd" and run the following:
 ```bash
-sfoo@SamLenoX270:~/go/src/github.com/samuel-foo/movietweets/cmd$ go build -o movietweets main.go
-sfoo@SamLenoX270:~/go/src/github.com/samuel-foo/movietweets/cmd$ ls
+~/go/src/github.com/samuel-foo/movietweets/cmd$ go build -o movietweets main.go
+~/go/src/github.com/samuel-foo/movietweets/cmd$ ls
 main.go  movietweets
 ```
 
 ## Command line options
+Get help on the tool, run:
+```bash
+~/go/src/github.com/samuel-foo/movietweets/cmd$ go run main.go -h
+```
+
 | Option | Default       |   Description |
 | ------------- | ------------- | ------------- |
+| -h | n/a |  show help |
 | -datadir | current directory | Directory path containing the *.dat files to analyze. Note the directory must contain files with name: movies.dat, ratings.dat  |
-| -topn | 1 | Top N most popular genre to print |
+| -topn | 3 | Top N most popular genre to print, default to top 3 |
 | -currentyear | current year | Year to start counting backward, default to current year |
 
 Show top three most popular genre per year for the last ten years
 ```bash
-sfoo@SamLenoX270:~/go/src/github.com/samuel-foo/movietweets/cmd$ go run main.go -datadir "../test_data/big" -topn 3
+~/go/src/github.com/samuel-foo/movietweets/cmd$ go run main.go -datadir "../test_data/big" -topn 3
 Capturing ratings between 2010-01-01 00:00:00 +0000 UTC and 2021-01-01 00:00:00 +0000 UTC
 
 ---------- Result ----------
@@ -32,16 +38,16 @@ Year: 2013
    Action|Crime|Thriller : 3787
 
 ----------------------------
-sfoo@SamLenoX270:~/go/src/github.com/samuel-foo/movietweets/cmd$
+~/go/src/github.com/samuel-foo/movietweets/cmd$
 ```
 
 Build executable, show top two most popular genre per year for the last ten years
 ```bash
-sfoo@SamLenoX270:~/go/src/github.com/samuel-foo/movietweets/cmd$ go build -o movietweets main.go
-sfoo@SamLenoX270:~/go/src/github.com/samuel-foo/movietweets/cmd$ ls
+~/go/src/github.com/samuel-foo/movietweets/cmd$ go build -o movietweets main.go
+~/go/src/github.com/samuel-foo/movietweets/cmd$ ls
 main.go  movietweets
 
-sfoo@SamLenoX270:~/go/src/github.com/samuel-foo/movietweets/cmd$ ./movietweets -datadir "../test_data/small" -topn 2
+~/go/src/github.com/samuel-foo/movietweets/cmd$ ./movietweets -datadir "../test_data/small" -topn 2
 Capturing ratings between 2010-01-01 00:00:00 +0000 UTC and 2021-01-01 00:00:00 +0000 UTC
 
 ---------- Result ----------
@@ -58,7 +64,7 @@ Year: 2019
 
 Show top two most popular genre per year for the last ten years from year 2029
 ```bash
-sfoo@SamLenoX270:~/go/src/github.com/samuel-foo/movietweets/cmd$ ./movietweets -datadir "../test_data/small" -topn 2 -currentyear 2029
+~/go/src/github.com/samuel-foo/movietweets/cmd$ ./movietweets -datadir "../test_data/small" -topn 2 -currentyear 2029
 Capturing ratings between 2019-01-01 00:00:00 +0000 UTC and 2030-01-01 00:00:00 +0000 UTC
 
 ---------- Result ----------

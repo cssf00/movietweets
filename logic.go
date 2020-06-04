@@ -32,7 +32,7 @@ const (
 
 // GetMovieIDToGenreMap parses movies data file and returns a map of MovieID to Genre map
 func GetMovieIDToGenreMap(dataDir string) (map[string]string, error) {
-	movieID2Genre := make(map[string]string, 0)
+	movieIDToGenre := make(map[string]string, 0)
 
 	// For each row sorts the genre list alphabetically because they could be out of order
 	var action fileparser.RowAction = func(fields []string) error {
@@ -41,7 +41,7 @@ func GetMovieIDToGenreMap(dataDir string) (map[string]string, error) {
 		genreSlice = strings.Split(fields[2], GenreDelimiter)
 		genreSlice.Sort()
 		// field 0 is movie id
-		movieID2Genre[fields[0]] = strings.Join(genreSlice, GenreDelimiter)
+		movieIDToGenre[fields[0]] = strings.Join(genreSlice, GenreDelimiter)
 		return nil
 	}
 
@@ -49,21 +49,23 @@ func GetMovieIDToGenreMap(dataDir string) (map[string]string, error) {
 		return nil, err
 	}
 
-	return movieID2Genre, nil
+	return movieIDToGenre, nil
 }
 
 // GetYearlyGenreCountResults parses ratings data file, for each row it increments genre count by year based on the timestamp of the tweet.
 // Results returned are sorted by year in ascending order. Genre counts are not sorted giving client freedom to sort in the ways they want
-func GetYearlyGenreCountResults(dataDir string, currentYear int, movieID2Genre map[string]string) (resultm.Results, error) {
+func GetYearlyGenreCountResults(dataDir string, currentYear int, movieIDToGenre map[string]string) (resultm.Results, error) {
 
 	// Calculate minimum date past decade
 	minAcceptedDate := time.Date((currentYear - 10), time.January, 1, 0, 0, 0, 0, time.UTC)
 	// Calculate the minimum accepted seconds since epoch, ratings older than this will be ignored
 	minAcceptedDateSec := minAcceptedDate.Unix()
 
+	// Calculate maximum date allowed, include current year
 	maxAcceptedDate := time.Date((currentYear + 1), time.January, 1, 0, 0, 0, 0, time.UTC)
 	maxAcceptedDateSec := maxAcceptedDate.Unix()
-	fmt.Printf("Capturing ratings between %s and %s\n\n", minAcceptedDate, maxAcceptedDate)
+	fmt.Printf("Capturing ratings between %s and %s\n\n",
+		minAcceptedDate.Format(time.RFC3339), maxAcceptedDate.Format(time.RFC3339))
 
 	// For each rating record increments count per genre
 	rm := resultm.NewResultManager()
@@ -72,7 +74,7 @@ func GetYearlyGenreCountResults(dataDir string, currentYear int, movieID2Genre m
 			if secondsSinceEpoch >= minAcceptedDateSec &&
 				secondsSinceEpoch < maxAcceptedDateSec {
 				// lookup genre by movie id
-				if genre, ok := movieID2Genre[fields[1]]; ok {
+				if genre, ok := movieIDToGenre[fields[1]]; ok {
 					rm.Capture(time.Unix(secondsSinceEpoch, 0).Year(), genre)
 				} else {
 					log.Printf("Warning, movie id cannot be found in movies.dat: %s, skipping...\n", fields[1])

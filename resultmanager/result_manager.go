@@ -6,11 +6,14 @@ import (
 
 // Capturer interface
 type Capturer interface {
+	// Capture which year the movie genre is found
 	Capture(year int, genre string)
 }
 
 // ResultGetter interface
 type ResultGetter interface {
+	// GetResult returns Results, slice of yearly genre counts Result, that can be sorted by caller. Results are sorted in ascending year,
+	// genre counts are not sorted to allow the caller to sort them based on their needs
 	GetResult() Results
 }
 
@@ -22,32 +25,36 @@ type ResultManager interface {
 
 // Implements the ResultManager interface
 type resultManager struct {
-	year2GenreCounts map[int]map[string]int
+	yearToGenreCounts map[int]map[string]int
 }
 
-// NewResultManager returns a new result manager
+// NewResultManager returns a new result manager for capturing data and reporting results
 func NewResultManager() ResultManager {
 	return &resultManager{
-		year2GenreCounts: make(map[int]map[string]int, 0),
+		yearToGenreCounts: make(map[int]map[string]int, 0),
 	}
 }
 
-// Capture result
+// Capture which year the movie genre is found
 func (m *resultManager) Capture(year int, genre string) {
-	if genre2Count, ok := m.year2GenreCounts[year]; ok {
-		genre2Count[genre]++
+	if genreToCount, ok := m.yearToGenreCounts[year]; ok {
+		if _, iok := genreToCount[genre]; iok {
+			genreToCount[genre]++
+		} else {
+			genreToCount[genre] = 1
+		}
 	} else {
-		m.year2GenreCounts[year] = map[string]int{genre: 1}
+		m.yearToGenreCounts[year] = map[string]int{genre: 1}
 	}
 }
 
-// GetResult returns results in ascending year, genre counts are not sorted to allow the caller
-// to sort them based on their needs
+// GetResult returns Results, slice of yearly genre counts Result, that can be sorted by caller. Results are sorted in ascending year,
+// genre counts are not sorted to allow the caller to sort them based on their needs
 func (m *resultManager) GetResult() Results {
 	var results Results
-	for year, genre2Count := range m.year2GenreCounts {
+	for year, genreToCount := range m.yearToGenreCounts {
 		var genreCounts GenreCounts
-		for genre, count := range genre2Count {
+		for genre, count := range genreToCount {
 			genreCounts = append(genreCounts, GenreCount{Genre: genre, Count: count})
 		}
 

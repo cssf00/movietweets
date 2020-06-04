@@ -16,13 +16,13 @@ import (
 func main() {
 	var (
 		dataDir     string
-		currentYear int
 		topN        int
+		currentYear int
 	)
 	{
 		flag.StringVar(&dataDir, "datadir", "",
 			"Directory path containing the *.dat files to analyse")
-		flag.IntVar(&topN, "topn", 1, "Top N most popular genre to print")
+		flag.IntVar(&topN, "topn", 3, "Top N most popular genre to print, default to top 3")
 		flag.IntVar(&currentYear, "currentyear", time.Now().UTC().Year(),
 			"Year to start counting backward, default to current year")
 	}
@@ -37,12 +37,12 @@ func main() {
 		}
 	}
 
-	movieID2Genre, err := movietweets.GetMovieIDToGenreMap(dataDir)
+	movieIDToGenre, err := movietweets.GetMovieIDToGenreMap(dataDir)
 	if err != nil {
 		os.Exit(2)
 	}
 
-	results, err := movietweets.GetYearlyGenreCountResults(dataDir, currentYear, movieID2Genre)
+	results, err := movietweets.GetYearlyGenreCountResults(dataDir, currentYear, movieIDToGenre)
 	if err != nil {
 		os.Exit(3)
 	}
@@ -56,7 +56,7 @@ func main() {
 		sort.Sort(resultm.ByMostPopular{GenreCounts: genreCounts})
 
 		// Prevent printing out-of-range elements.
-		// If number of genre-counts is less than topN, set topN to the len
+		// If number of genre-counts is less than topN, set topN to the number of genre-counts
 		tempTopN := topN
 		if len(genreCounts) < topN {
 			tempTopN = len(genreCounts)
