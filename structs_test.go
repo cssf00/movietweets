@@ -62,3 +62,24 @@ func TestExtractYears(t *testing.T) {
 	fmt.Println(yr)
 	g.Expect(1).Should(Equal(1))
 }
+
+func TestCaptureDataStructure(t *testing.T) {
+	g := NewGomegaWithT(t)
+
+	capture(2012, "Horror")
+	capture(2012, "Horror")
+	capture(2013, "Thriller")
+
+	g.Expect(year2GenreCounts[2012]["Horror"]).Should(Equal(2))
+	g.Expect(year2GenreCounts[2013]["Thriller"]).Should(Equal(1))
+}
+
+var year2GenreCounts = make(map[int]map[string]int, 0)
+
+func capture(year int, genre string) {
+	if m, ok := year2GenreCounts[year]; ok {
+		m[genre]++
+	} else {
+		year2GenreCounts[year] = map[string]int{genre: 1}
+	}
+}
